@@ -29,6 +29,7 @@ textarea{width:100%;min-height:76px;resize:vertical}
 :focus-visible{outline:3px solid var(--ac);outline-offset:2px}
 .btn{background:var(--pr);color:var(--prt);border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500}
 .btn.alt{background:var(--sf2);color:var(--ink)}
+.plus{padding:8px 12px;font-size:18px;font-weight:700;line-height:1}
 .btn.sm{padding:4px 9px;font-size:13px}
 .btn.del{background:none;color:var(--bad);border:1px solid var(--bad)}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -82,6 +83,7 @@ dialog::backdrop{background:#0008}
   <main id="app"></main>
 </div>
 <dialog id="dlg"></dialog>
+<dialog id="dlg2"></dialog>
 <div id="toast" role="status"></div>
 <script>
 const $=s=>document.querySelector(s);
@@ -97,6 +99,7 @@ const rnd=a=>a[Math.floor(Math.random()*a.length)];
 const uid=()=>Math.random().toString(36).slice(2,9);
 const DT=['Món nước','Món khô','Món chay','Ăn nhẹ','Tráng miệng'];
 let S=load(),tab='lib',wk=mon(new Date()),day=iso(new Date()),pk=null,ed=null,q='',cf='',tf='',rt='';
+Object.assign(CAT,S.cats||{});
 function load(){try{const r=JSON.parse(localStorage.getItem('bep-tuan'));if(r&&r.dishes){r.types=r.types||DT.slice();return r}}catch(e){}
 return{dishes:[],types:DT.slice(),sched:{},prof:{sex:'m',age:20,h:170,w:60,act:1.55,goal:'keep'}}}
 function save(){try{localStorage.setItem('bep-tuan',JSON.stringify(S))}catch(e){toast('Bộ nhớ trình duyệt đã đầy, hãy xóa bớt ảnh')}}
@@ -124,8 +127,8 @@ function vLib(){return `
 <div class="box"><h2>Thêm món hàng loạt</h2>
 <textarea id="names" placeholder="Nhập nhiều tên, mỗi dòng một món hoặc cách nhau bằng dấu phẩy: phở bò, cơm tấm, trà đào, sinh tố bơ"></textarea>
 <div class="row" style="margin-top:8px">
-<select id="ncat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
-<select id="ntype" aria-label="Kiểu món">${typeOpts('')}</select>
+<select id="ncat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><button class="btn alt plus" onclick="plusCat()" title="Thêm nhóm mới" aria-label="Thêm nhóm mới">+</button>
+<select id="ntype" aria-label="Kiểu món">${typeOpts('')}</select><button class="btn alt plus" onclick="plusType()" title="Thêm loại món mới" aria-label="Thêm loại món mới">+</button>
 <button class="btn" onclick="addNames()">Thêm vào thư viện</button>
 <label class="btn alt" style="cursor:pointer">Tải nhiều ảnh<input type="file" id="imgs" accept="image/*" multiple hidden onchange="addImgs(this.files)"></label>
 <button class="btn alt" onclick="sample()">Thêm món mẫu</button><button class="btn alt" onclick="openTypes()">Quản lý loại món</button></div>
@@ -150,8 +153,8 @@ $('#spot').innerHTML=`<div class="box row" style="background:var(--acs)"><div cl
 function openEd(id){ed=JSON.parse(JSON.stringify(D(id)));drawEd();$('#dlg').showModal()}
 function drawEd(){const e=ed;$('#dlg').innerHTML=`<h2>Sửa món</h2><div class="form">
 <label class="f">Tên<input value="${esc(e.name)}" oninput="ed.name=this.value"></label>
-<label class="f">Loại<select onchange="ed.cat=this.value">${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${e.cat==k?'selected':''}>${v}</option>`).join('')}</select></label>
-<label class="f">Kiểu món<select onchange="ed.type=this.value">${typeOpts(e.type||'')}</select></label>
+<label class="f">Loại<span class="row" style="flex-wrap:nowrap"><select style="flex:1;min-width:0" onchange="ed.cat=this.value">${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${e.cat==k?'selected':''}>${v}</option>`).join('')}</select><button class="btn alt plus" onclick="plusCat(1)" title="Thêm nhóm mới" aria-label="Thêm nhóm mới">+</button></span></label>
+<label class="f">Kiểu món<span class="row" style="flex-wrap:nowrap"><select style="flex:1;min-width:0" onchange="ed.type=this.value">${typeOpts(e.type||'')}</select><button class="btn alt plus" onclick="plusType(1)" title="Thêm loại món mới" aria-label="Thêm loại món mới">+</button></span></label>
 ${[['kcal','Kcal'],['p','Đạm (g)'],['c','Carb (g)'],['f','Béo (g)']].map(([k,l])=>`<label class="f">${l}<input type="number" min="0" id="e_${k}" value="${num(e[k])}" oninput="ed.${k}=+this.value"></label>`).join('')}
 </div>
 <div class="row" style="margin:10px 0"><div class="th it" style="width:48px;height:48px;border:0;border-radius:8px;background:var(--sf2) center/cover;${e.img?`background-image:url(${e.img})`:''}"></div>
@@ -216,6 +219,17 @@ ${inp('age','Tuổi',10)}${inp('h','Chiều cao (cm)',100)}${inp('w','Cân nặn
 <div><small>Chất béo</small><span class="big">${Math.round(g.f)}</span> g</div></div>
 <p class="sub" style="font-size:13px">BMR theo công thức Mifflin–St Jeor, TDEE = BMR × mức vận động. Tỉ lệ đạm/carb/béo: giảm cân 30/40/30, giữ cân 20/50/30, tăng cân 25/50/25. Đây là ước tính tham khảo, không thay thế tư vấn của bác sĩ hoặc chuyên gia dinh dưỡng.</p></div>`}
 
+
+/* ---------- nút dấu cộng ---------- */
+function keep(fn){const v=$('#names')?$('#names').value:'',c=$('#ncat')?$('#ncat').value:'',t=$('#ntype')?$('#ntype').value:'';render();if($('#names')){$('#names').value=v;$('#ncat').value=c;$('#ntype').value=t}fn()}
+function ask(t,cb){const d=$('#dlg2');d.innerHTML=`<h2>${t}</h2><div class="row"><input id="an" style="flex:1" onkeydown="if(event.key=='Enter')okAsk()"><button class="btn" onclick="okAsk()">Thêm</button><button class="btn alt" onclick="$('#dlg2').close()">Hủy</button></div>`;ask.cb=cb;d.showModal();$('#an').focus()}
+function okAsk(){const v=$('#an').value.trim();if(!v){toast('Hãy nhập tên');return}$('#dlg2').close();ask.cb(v)}
+function plusType(inEd){ask('Tên loại món mới (ví dụ: Món nướng)',n=>{
+if(S.types.includes(n)){toast('Loại này đã có');return}S.types.push(n);save();
+if(inEd){ed.type=n;drawEd()}else keep(()=>{$('#ntype').value=n})})}
+function plusCat(inEd){ask('Tên nhóm mới (ví dụ: Trái cây)',n=>{
+if(Object.values(CAT).includes(n)){toast('Nhóm này đã có');return}const k='c'+uid();S.cats=S.cats||{};S.cats[k]=n;CAT[k]=n;save();
+if(inEd){ed.cat=k;drawEd()}else keep(()=>{$('#ncat').value=k})})}
 
 /* ---------- quản lý loại món ---------- */
 function openTypes(){$('#dlg').innerHTML=`<h2>Quản lý loại món</h2><p class="sub" style="font-size:13px">Thêm, đổi tên hoặc xóa loại. Xóa loại chỉ bỏ nhãn, các món vẫn còn trong thư viện.</p><div id="tl" style="margin-top:10px"></div><div class="row" style="margin-top:10px"><input id="nt" placeholder="Loại mới, ví dụ: Món nướng" style="flex:1" onkeydown="if(event.key=='Enter')addT()"><button class="btn" onclick="addT()">Thêm loại</button></div><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn alt" onclick="$('#dlg').close();render()">Xong</button></div>`;drawT();$('#dlg').showModal()}
