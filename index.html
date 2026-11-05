@@ -18,6 +18,7 @@ h2{font-size:18px;margin:0 0 10px;font-weight:700}
 p.sub{color:var(--mut);margin:6px 0 0;max-width:56ch}
 .top{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:18px}
 .spin{background:var(--ac);color:#2a1b00;border:0;border-radius:14px;padding:14px 20px;font:700 16px inherit;font-family:inherit;cursor:pointer}
+.top select{padding:12px 10px;border-radius:10px}
 .tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:2px solid var(--ln);margin-bottom:18px}
 .tabs button{background:none;border:0;padding:10px 14px;font:500 15px "Be Vietnam Pro",system-ui,sans-serif;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
 .tabs button.on{color:var(--pr);border-color:var(--pr);font-weight:700}
@@ -74,7 +75,7 @@ dialog::backdrop{background:#0008}
 <div class="wrap">
   <div class="top">
     <div><h1>THỰC ĐƠN HÀNG TUẦN</h1></div>
-    <button class="spin" onclick="spot()">Hôm nay ăn gì?</button>
+    <div class="row"><select id="rt" aria-label="Loại món khi random" onchange="rt=this.value"></select><button class="spin" onclick="spot()">Hôm nay ăn gì?</button></div>
   </div>
   <div id="spot"></div>
   <nav class="tabs" id="tabs"></nav>
@@ -94,12 +95,14 @@ const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const mon=d=>addD(d,-((d.getDay()+6)%7));
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
 const uid=()=>Math.random().toString(36).slice(2,9);
-let S=load(),tab='lib',wk=mon(new Date()),day=iso(new Date()),pk=null,ed=null,q='',cf='';
-function load(){try{const r=JSON.parse(localStorage.getItem('bep-tuan'));if(r&&r.dishes)return r}catch(e){}
-return{dishes:[],sched:{},prof:{sex:'m',age:20,h:170,w:60,act:1.55,goal:'keep'}}}
+const DT=['Món nước','Món khô','Món chay','Ăn nhẹ','Tráng miệng'];
+let S=load(),tab='lib',wk=mon(new Date()),day=iso(new Date()),pk=null,ed=null,q='',cf='',tf='',rt='';
+function load(){try{const r=JSON.parse(localStorage.getItem('bep-tuan'));if(r&&r.dishes){r.types=r.types||DT.slice();return r}}catch(e){}
+return{dishes:[],types:DT.slice(),sched:{},prof:{sex:'m',age:20,h:170,w:60,act:1.55,goal:'keep'}}}
 function save(){try{localStorage.setItem('bep-tuan',JSON.stringify(S))}catch(e){toast('Bộ nhớ trình duyệt đã đầy, hãy xóa bớt ảnh')}}
 function toast(m){const t=$('#toast');t.textContent=m;t.className='on';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',2600)}
 const D=id=>S.dishes.find(x=>x.id===id);
+const typeOpts=v=>'<option value="">Chưa phân loại</option>'+S.types.map(t=>`<option value="${esc(t)}" ${v===t?'selected':''}>${esc(t)}</option>`).join('');
 const sched=dt=>S.sched[dt]=S.sched[dt]||[[],[],[]];
 const items=(dt,i)=>((S.sched[dt]||[])[i]||[]).map(D).filter(Boolean);
 function tot(dt){const t={k:0,p:0,c:0,f:0};for(let i=0;i<3;i++)items(dt,i).forEach(d=>{t.k+=+d.kcal||0;t.p+=+d.p||0;t.c+=+d.c||0;t.f+=+d.f||0});return t}
@@ -111,6 +114,7 @@ function save2(){save();render()}
 /* ---------- tabs ---------- */
 function render(){
  $('#tabs').innerHTML=[['lib','Thư viện món'],['week','Lịch tuần'],['day','Một ngày'],['body','Cơ thể và mục tiêu']].map(([k,l])=>`<button class="${tab==k?'on':''}" onclick="tab='${k}';render()">${l}</button>`).join('');
+ $('#rt').innerHTML='<option value="">Mọi loại món</option>'+S.types.map(t=>`<option value="${esc(t)}" ${rt==t?'selected':''}>${esc(t)}</option>`).join('');
  $('#app').innerHTML={lib:vLib,week:vWeek,day:vDay,body:vBody}[tab]();
  if(tab=='lib')grid();
 }
@@ -121,23 +125,25 @@ function vLib(){return `
 <textarea id="names" placeholder="Nhập nhiều tên, mỗi dòng một món hoặc cách nhau bằng dấu phẩy: phở bò, cơm tấm, trà đào, sinh tố bơ"></textarea>
 <div class="row" style="margin-top:8px">
 <select id="ncat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
+<select id="ntype" aria-label="Kiểu món">${typeOpts('')}</select>
 <button class="btn" onclick="addNames()">Thêm vào thư viện</button>
 <label class="btn alt" style="cursor:pointer">Tải nhiều ảnh<input type="file" id="imgs" accept="image/*" multiple hidden onchange="addImgs(this.files)"></label>
-<button class="btn alt" onclick="sample()">Thêm món mẫu</button></div>
+<button class="btn alt" onclick="sample()">Thêm món mẫu</button><button class="btn alt" onclick="openTypes()">Quản lý loại món</button></div>
 <p class="sub" style="font-size:13px">Tên file ảnh sẽ thành tên món. Bấm vào một món để sửa kcal, ảnh và từng thành phần.</p></div>
 <div class="row" style="margin-bottom:12px"><input id="q" placeholder="Tìm món…" value="${esc(q)}" oninput="q=this.value;grid()">
 <select onchange="cf=this.value;grid()"><option value="">Tất cả</option>${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${cf==k?'selected':''}>${v}</option>`).join('')}</select>
+<select onchange="tf=this.value;grid()"><option value="">Mọi loại món</option><option value="__none" ${tf=='__none'?'selected':''}>Chưa phân loại</option>${S.types.map(t=>`<option value="${esc(t)}" ${tf==t?'selected':''}>${esc(t)}</option>`).join('')}</select>
 <span id="cnt" style="color:var(--mut)"></span></div><div class="grid" id="grid"></div>`}
-function grid(){const l=S.dishes.filter(d=>(!cf||d.cat==cf)&&d.name.toLowerCase().includes(q.toLowerCase()));
+function grid(){const l=S.dishes.filter(d=>(!cf||d.cat==cf)&&(!tf||(tf=='__none'?!d.type:d.type==tf))&&d.name.toLowerCase().includes(q.toLowerCase()));
 $('#cnt').textContent=l.length+' món';
-$('#grid').innerHTML=l.length?l.map(d=>`<button class="card" onclick="openEd('${d.id}')"><div class="ph" style="${d.img?`background-image:url(${d.img})`:''}">${d.img?'':esc(d.name[0]||'?').toUpperCase()}</div><div class="t"><b>${esc(d.name)}</b><small>${CAT[d.cat]} · ${num(d.kcal)} kcal</small></div></button>`).join(''):'<div class="empty" style="grid-column:1/-1">Chưa có món nào. Nhập tên ở trên hoặc bấm Thêm món mẫu.</div>'}
-function mk(n,cat,k,p,c,f,img){return{id:uid(),name:n,cat:cat||'food',kcal:k||0,p:p||0,c:c||0,f:f||0,img:img||'',ing:[]}}
+$('#grid').innerHTML=l.length?l.map(d=>`<button class="card" onclick="openEd('${d.id}')"><div class="ph" style="${d.img?`background-image:url(${d.img})`:''}">${d.img?'':esc(d.name[0]||'?').toUpperCase()}</div><div class="t"><b>${esc(d.name)}</b><small>${CAT[d.cat]}${d.type?' · '+esc(d.type):''} · ${num(d.kcal)} kcal</small></div></button>`).join(''):'<div class="empty" style="grid-column:1/-1">Chưa có món nào. Nhập tên ở trên hoặc bấm Thêm món mẫu.</div>'}
+function mk(n,cat,k,p,c,f,img){return{id:uid(),name:n,cat:cat||'food',type:(($('#ntype')||{}).value)||'',kcal:k||0,p:p||0,c:c||0,f:f||0,img:img||'',ing:[]}}
 function addNames(){const v=$('#names').value.split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);if(!v.length)return toast('Hãy nhập ít nhất một tên món');
 v.forEach(n=>S.dishes.push(mk(n,$('#ncat').value)));toast('Đã thêm '+v.length+' món');save2()}
 function shrink(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,240/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.7))};im.onerror=()=>r('');im.src=fr.result};fr.onerror=()=>r('');fr.readAsDataURL(f)})}
 async function addImgs(fs){let n=0;for(const f of fs){const u=await shrink(f);if(u){S.dishes.push(mk(f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' '),$('#ncat')?$('#ncat').value:'food',0,0,0,0,u));n++}}toast('Đã thêm '+n+' ảnh');save2()}
-function sample(){'Phở bò|food|450|25|60|12;Cơm tấm sườn|food|650|28|85|20;Bánh mì trứng|food|380|15|45|14;Cháo gà|food|300|18|40|6;Salad ức gà|food|320|32|15|14;Cá kho và cơm|food|520|30|70|12;Yến mạch sữa chua|food|280|12|40|8;Mì xào rau|food|500|14|70|18;Trà đào|drink|120|0|30|0;Cà phê sữa|drink|110|3|17|3;Sinh tố bơ|drink|250|4|25|16;Nước cam|drink|110|2|26|0'.split(';').forEach(s=>{const a=s.split('|');if(!S.dishes.some(d=>d.name==a[0]))S.dishes.push(mk(a[0],a[1],+a[2],+a[3],+a[4],+a[5]))});toast('Đã thêm món mẫu (số liệu ước tính)');save2()}
-function spot(){if(!S.dishes.length)return toast('Thư viện đang trống, hãy thêm món trước');const f=S.dishes.filter(d=>d.cat=='food'),d=rnd(f.length?f:S.dishes);
+function sample(){'Phở bò|food|450|25|60|12|Món nước;Cơm tấm sườn|food|650|28|85|20|Món khô;Bánh mì trứng|food|380|15|45|14|Ăn nhẹ;Cháo gà|food|300|18|40|6|Món nước;Salad ức gà|food|320|32|15|14|Món khô;Cá kho và cơm|food|520|30|70|12|Món khô;Yến mạch sữa chua|food|280|12|40|8|Ăn nhẹ;Mì xào rau|food|500|14|70|18|Món khô;Trà đào|drink|120|0|30|0;Cà phê sữa|drink|110|3|17|3;Sinh tố bơ|drink|250|4|25|16;Nước cam|drink|110|2|26|0'.split(';').forEach(s=>{const a=s.split('|');if(!S.dishes.some(d=>d.name==a[0])){const d=mk(a[0],a[1],+a[2],+a[3],+a[4],+a[5]);d.type=S.types.includes(a[6])?a[6]:'';S.dishes.push(d)}});toast('Đã thêm món mẫu (số liệu ước tính)');save2()}
+function spot(){if(!S.dishes.length)return toast('Thư viện đang trống, hãy thêm món trước');const base=S.dishes.filter(d=>!rt||d.type==rt);if(!base.length)return toast('Chưa có món thuộc loại này');const f=base.filter(d=>d.cat=='food'),d=rnd(f.length?f:base);
 $('#spot').innerHTML=`<div class="box row" style="background:var(--acs)"><div class="it" style="border:0;flex:1"><div class="th" style="width:56px;height:56px;${d.img?`background-image:url(${d.img})`:''}"></div><span class="n"><b style="font-size:20px">${esc(d.name)}</b><br><small>${num(d.kcal)} kcal · đạm ${num(d.p)}g · carb ${num(d.c)}g · béo ${num(d.f)}g</small></span></div><button class="btn" onclick="spot()">Chọn lại</button><button class="btn alt" onclick="$('#spot').innerHTML=''">Đóng</button></div>`}
 
 /* ---------- dish editor ---------- */
@@ -145,6 +151,7 @@ function openEd(id){ed=JSON.parse(JSON.stringify(D(id)));drawEd();$('#dlg').show
 function drawEd(){const e=ed;$('#dlg').innerHTML=`<h2>Sửa món</h2><div class="form">
 <label class="f">Tên<input value="${esc(e.name)}" oninput="ed.name=this.value"></label>
 <label class="f">Loại<select onchange="ed.cat=this.value">${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${e.cat==k?'selected':''}>${v}</option>`).join('')}</select></label>
+<label class="f">Kiểu món<select onchange="ed.type=this.value">${typeOpts(e.type||'')}</select></label>
 ${[['kcal','Kcal'],['p','Đạm (g)'],['c','Carb (g)'],['f','Béo (g)']].map(([k,l])=>`<label class="f">${l}<input type="number" min="0" id="e_${k}" value="${num(e[k])}" oninput="ed.${k}=+this.value"></label>`).join('')}
 </div>
 <div class="row" style="margin:10px 0"><div class="th it" style="width:48px;height:48px;border:0;border-radius:8px;background:var(--sf2) center/cover;${e.img?`background-image:url(${e.img})`:''}"></div>
@@ -160,10 +167,10 @@ function delDish(){if(!confirm('Xóa món này khỏi thư viện và lịch?'))
 
 /* ---------- schedule actions ---------- */
 function openPick(dt,i){pk={dt,i};$('#dlg').innerHTML=`<h2>Thêm vào ${SL[i].toLowerCase()} · ${WD[parse(dt).getDay()]} ${parse(dt).getDate()}/${parse(dt).getMonth()+1}</h2><div class="row"><input id="pq" placeholder="Tìm món…" oninput="pickList()" style="flex:1"><button class="btn" onclick="$('#dlg').close();render()">Xong</button></div><div class="pick" id="pl"></div>`;pickList();$('#dlg').showModal()}
-function pickList(){const v=($('#pq').value||'').toLowerCase(),l=S.dishes.filter(d=>d.name.toLowerCase().includes(v));
-$('#pl').innerHTML=l.length?l.map(d=>`<button onclick="sched('${pk.dt}')[${pk.i}].push('${d.id}');save();toast('Đã thêm ${esc(d.name).replace(/'/g,'')}')"><span>${esc(d.name)}</span><small>${num(d.kcal)} kcal</small></button>`).join(''):'<div class="empty">Không có món phù hợp. Thêm món ở tab Thư viện.</div>'}
+function pickList(){const v=($('#pq').value||'').toLowerCase(),l=S.dishes.filter(d=>(d.name+' '+(d.type||'')).toLowerCase().includes(v));
+$('#pl').innerHTML=l.length?l.map(d=>`<button onclick="sched('${pk.dt}')[${pk.i}].push('${d.id}');save();toast('Đã thêm ${esc(d.name).replace(/'/g,'')}')"><span>${esc(d.name)}</span><small>${d.type?esc(d.type)+' · ':''}${num(d.kcal)} kcal</small></button>`).join(''):'<div class="empty">Không có món phù hợp. Thêm món ở tab Thư viện.</div>'}
 function rm(dt,i,k){sched(dt)[i].splice(k,1);save2()}
-function rndMeal(dt,i,quiet){const f=S.dishes.filter(d=>d.cat=='food'),k=S.dishes.filter(d=>d.cat=='drink');if(!S.dishes.length){toast('Thư viện đang trống');return false}
+function rndMeal(dt,i,quiet){const f0=S.dishes.filter(d=>d.cat=='food'),f1=f0.filter(d=>!rt||d.type==rt),f=f1.length?f1:f0,k=S.dishes.filter(d=>d.cat=='drink');if(!S.dishes.length){toast('Thư viện đang trống');return false}
 const a=sched(dt);a[i]=[rnd(f.length?f:S.dishes).id];if(k.length)a[i].push(rnd(k).id);if(!quiet)save2();return true}
 function rndDay(dt){if(![0,1,2].every(i=>rndMeal(dt,i,1)))return;save2()}
 function rndWeek(){for(let n=0;n<7;n++)for(let i=0;i<3;i++)if(!rndMeal(iso(addD(wk,n)),i,1))return;save2()}
@@ -208,6 +215,14 @@ ${inp('age','Tuổi',10)}${inp('h','Chiều cao (cm)',100)}${inp('w','Cân nặn
 <div><small>Carb</small><span class="big">${Math.round(g.c)}</span> g</div>
 <div><small>Chất béo</small><span class="big">${Math.round(g.f)}</span> g</div></div>
 <p class="sub" style="font-size:13px">BMR theo công thức Mifflin–St Jeor, TDEE = BMR × mức vận động. Tỉ lệ đạm/carb/béo: giảm cân 30/40/30, giữ cân 20/50/30, tăng cân 25/50/25. Đây là ước tính tham khảo, không thay thế tư vấn của bác sĩ hoặc chuyên gia dinh dưỡng.</p></div>`}
+
+
+/* ---------- quản lý loại món ---------- */
+function openTypes(){$('#dlg').innerHTML=`<h2>Quản lý loại món</h2><p class="sub" style="font-size:13px">Thêm, đổi tên hoặc xóa loại. Xóa loại chỉ bỏ nhãn, các món vẫn còn trong thư viện.</p><div id="tl" style="margin-top:10px"></div><div class="row" style="margin-top:10px"><input id="nt" placeholder="Loại mới, ví dụ: Món nướng" style="flex:1" onkeydown="if(event.key=='Enter')addT()"><button class="btn" onclick="addT()">Thêm loại</button></div><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn alt" onclick="$('#dlg').close();render()">Xong</button></div>`;drawT();$('#dlg').showModal()}
+function drawT(){$('#tl').innerHTML=S.types.map((t,i)=>`<div class="row" style="margin-bottom:6px"><input value="${esc(t)}" style="flex:1" onchange="renT(${i},this.value)" aria-label="Tên loại"><small style="color:var(--mut)">${S.dishes.filter(d=>d.type==t).length} món</small><button class="btn del sm" onclick="delT(${i})">Xóa</button></div>`).join('')||'<div class="empty">Chưa có loại nào.</div>'}
+function addT(){const v=$('#nt').value.trim();if(!v)return toast('Hãy nhập tên loại');if(S.types.includes(v))return toast('Loại này đã có');S.types.push(v);save();drawT();$('#nt').focus()}
+function renT(i,v){v=v.trim();const o=S.types[i];if(!v||v==o){drawT();return}if(S.types.includes(v)){toast('Loại này đã có');drawT();return}S.dishes.forEach(d=>{if(d.type==o)d.type=v});if(rt==o)rt=v;if(tf==o)tf=v;S.types[i]=v;save();drawT()}
+function delT(i){const o=S.types[i];if(!confirm('Xóa loại “'+o+'”? Các món thuộc loại này sẽ chuyển về Chưa phân loại.'))return;S.dishes.forEach(d=>{if(d.type==o)d.type=''});if(rt==o)rt='';if(tf==o)tf='';S.types.splice(i,1);save();drawT()}
 
 $('#dlg').addEventListener('close',()=>{if(tab!='lib')render()});
 render();
