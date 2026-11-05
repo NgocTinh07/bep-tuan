@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bếp tuần – Thực đơn và dinh dưỡng</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap">
+<style>
+:root{--bg:#f0f5ef;--sf:#fff;--ink:#16291f;--mut:#5b7164;--ln:#d2dfd3;--pr:#1e6b50;--prt:#fff;--ac:#f0a02e;--acs:#fdf0d8;--bad:#c4452f;--sf2:#e6efe6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b15;--sf:#17261e;--ink:#e6f0e8;--mut:#9ab1a1;--ln:#2a3f33;--pr:#4fc79a;--prt:#082016;--acs:#3a2d12;--bad:#ff8a73;--sf2:#1f3328}}
+:root[data-theme="dark"]{--bg:#0f1b15;--sf:#17261e;--ink:#e6f0e8;--mut:#9ab1a1;--ln:#2a3f33;--pr:#4fc79a;--prt:#082016;--acs:#3a2d12;--bad:#ff8a73;--sf2:#1f3328}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 15px/1.5 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0;font-weight:800;letter-spacing:-.02em}
+h2{font-size:18px;margin:0 0 10px;font-weight:700}
+p.sub{color:var(--mut);margin:6px 0 0;max-width:56ch}
+.top{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:18px}
+.spin{background:var(--ac);color:#2a1b00;border:0;border-radius:14px;padding:14px 20px;font:700 16px inherit;font-family:inherit;cursor:pointer}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:2px solid var(--ln);margin-bottom:18px}
+.tabs button{background:none;border:0;padding:10px 14px;font:500 15px "Be Vietnam Pro",system-ui,sans-serif;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tabs button.on{color:var(--pr);border-color:var(--pr);font-weight:700}
+.box{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:16px;margin-bottom:16px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:8px 10px;max-width:100%}
+textarea{width:100%;min-height:76px;resize:vertical}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.btn{background:var(--pr);color:var(--prt);border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500}
+.btn.alt{background:var(--sf2);color:var(--ink)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn.del{background:none;color:var(--bad);border:1px solid var(--bad)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;overflow:hidden;cursor:pointer;text-align:left;padding:0}
+.card .ph{height:96px;background:var(--sf2) center/cover;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:var(--mut)}
+.card div.t{padding:8px 10px}.card b{display:block;line-height:1.25}.card small{color:var(--mut)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:780px;table-layout:fixed}
+th,td{border:1px solid var(--ln);padding:6px;vertical-align:top;background:var(--sf)}
+th{background:var(--sf2);font-weight:700;cursor:pointer}th small{display:block;font-weight:400;color:var(--mut)}
+th.today{background:var(--ac);color:#2a1b00}th.today small{color:#2a1b00}
+td.sl{width:64px;font-weight:700;background:var(--sf2);text-align:center;vertical-align:middle}
+.chip{display:flex;justify-content:space-between;gap:4px;background:var(--sf2);border-radius:6px;padding:2px 4px 2px 8px;margin-bottom:4px;font-size:13px}
+.chip button,.x{background:none;border:0;cursor:pointer;color:var(--mut)}
+.mini{display:flex;gap:4px;margin-top:4px}
+.tot td{font-weight:700;text-align:center;background:var(--acs)}
+.meals{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.it{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--ln)}
+.it .th{width:40px;height:40px;border-radius:8px;background:var(--sf2) center/cover;flex:none}
+.it span.n{flex:1}.it small{color:var(--mut)}
+.bar{height:10px;border-radius:6px;background:var(--sf2);overflow:hidden;margin:4px 0 12px}
+.bar i{display:block;height:100%;background:var(--pr)}.bar i.over{background:var(--bad)}
+.stat{display:flex;justify-content:space-between;font-size:14px}
+.big{font-size:34px;font-weight:800;line-height:1.1}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kv div{background:var(--sf2);border-radius:10px;padding:10px 12px}.kv small{color:var(--mut);display:block}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--mut)}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+dialog{border:1px solid var(--ln);border-radius:14px;background:var(--sf);color:var(--ink);padding:18px;width:min(640px,94vw);max-height:88vh}
+dialog::backdrop{background:#0008}
+.ing{display:grid;grid-template-columns:2fr 1fr repeat(4,.8fr) auto;gap:4px;margin-bottom:4px}
+.ing input{min-width:0;padding:5px 6px}
+.pick{max-height:50vh;overflow:auto;margin-top:8px}
+.pick button{display:flex;width:100%;justify-content:space-between;text-align:left;background:none;border:0;border-bottom:1px solid var(--ln);padding:8px 4px;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+#toast.on{opacity:1}
+.empty{color:var(--mut);padding:20px;text-align:center}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:600px){.ing{grid-template-columns:1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Bếp tuần</h1><p class="sub">Gom món ăn, xếp vào lịch sáng, trưa, tối và xem mỗi ngày nạp bao nhiêu kcal so với nhu cầu của cơ thể.</p></div>
+    <button class="spin" onclick="spot()">Hôm nay ăn gì?</button>
+  </div>
+  <div id="spot"></div>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="app"></main>
+</div>
+<dialog id="dlg"></dialog>
+<div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+const SL=['Sáng','Trưa','Tối'],WD=['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+const CAT={food:'Món ăn',drink:'Đồ uống',other:'Khác'};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>Math.round((+v||0)*10)/10;
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const mon=d=>addD(d,-((d.getDay()+6)%7));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const uid=()=>Math.random().toString(36).slice(2,9);
+let S=load(),tab='lib',wk=mon(new Date()),day=iso(new Date()),pk=null,ed=null,q='',cf='';
+function load(){try{const r=JSON.parse(localStorage.getItem('bep-tuan'));if(r&&r.dishes)return r}catch(e){}
+return{dishes:[],sched:{},prof:{sex:'m',age:20,h:170,w:60,act:1.55,goal:'keep'}}}
+function save(){try{localStorage.setItem('bep-tuan',JSON.stringify(S))}catch(e){toast('Bộ nhớ trình duyệt đã đầy, hãy xóa bớt ảnh')}}
+function toast(m){const t=$('#toast');t.textContent=m;t.className='on';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',2600)}
+const D=id=>S.dishes.find(x=>x.id===id);
+const sched=dt=>S.sched[dt]=S.sched[dt]||[[],[],[]];
+const items=(dt,i)=>((S.sched[dt]||[])[i]||[]).map(D).filter(Boolean);
+function tot(dt){const t={k:0,p:0,c:0,f:0};for(let i=0;i<3;i++)items(dt,i).forEach(d=>{t.k+=+d.kcal||0;t.p+=+d.p||0;t.c+=+d.c||0;t.f+=+d.f||0});return t}
+function tg(){const p=S.prof,bmr=10*p.w+6.25*p.h-5*p.age+(p.sex=='m'?5:-161),tdee=bmr*p.act;
+const adj={lose:-500,keep:0,gain:300}[p.goal],kc=Math.max(1200,tdee+adj),r={lose:[.3,.4,.3],keep:[.2,.5,.3],gain:[.25,.5,.25]}[p.goal];
+return{bmr,tdee,kc,adj,p:kc*r[0]/4,c:kc*r[1]/4,f:kc*r[2]/9,bmi:p.w/Math.pow(p.h/100,2)}}
+function save2(){save();render()}
+
+/* ---------- tabs ---------- */
+function render(){
+ $('#tabs').innerHTML=[['lib','Thư viện món'],['week','Lịch tuần'],['day','Một ngày'],['body','Cơ thể và mục tiêu']].map(([k,l])=>`<button class="${tab==k?'on':''}" onclick="tab='${k}';render()">${l}</button>`).join('');
+ $('#app').innerHTML={lib:vLib,week:vWeek,day:vDay,body:vBody}[tab]();
+ if(tab=='lib')grid();
+}
+
+/* ---------- library ---------- */
+function vLib(){return `
+<div class="box"><h2>Thêm món hàng loạt</h2>
+<textarea id="names" placeholder="Nhập nhiều tên, mỗi dòng một món hoặc cách nhau bằng dấu phẩy: phở bò, cơm tấm, trà đào, sinh tố bơ"></textarea>
+<div class="row" style="margin-top:8px">
+<select id="ncat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
+<button class="btn" onclick="addNames()">Thêm vào thư viện</button>
+<label class="btn alt" style="cursor:pointer">Tải nhiều ảnh<input type="file" id="imgs" accept="image/*" multiple hidden onchange="addImgs(this.files)"></label>
+<button class="btn alt" onclick="sample()">Thêm món mẫu</button></div>
+<p class="sub" style="font-size:13px">Tên file ảnh sẽ thành tên món. Bấm vào một món để sửa kcal, ảnh và từng thành phần.</p></div>
+<div class="row" style="margin-bottom:12px"><input id="q" placeholder="Tìm món…" value="${esc(q)}" oninput="q=this.value;grid()">
+<select onchange="cf=this.value;grid()"><option value="">Tất cả</option>${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${cf==k?'selected':''}>${v}</option>`).join('')}</select>
+<span id="cnt" style="color:var(--mut)"></span></div><div class="grid" id="grid"></div>`}
+function grid(){const l=S.dishes.filter(d=>(!cf||d.cat==cf)&&d.name.toLowerCase().includes(q.toLowerCase()));
+$('#cnt').textContent=l.length+' món';
+$('#grid').innerHTML=l.length?l.map(d=>`<button class="card" onclick="openEd('${d.id}')"><div class="ph" style="${d.img?`background-image:url(${d.img})`:''}">${d.img?'':esc(d.name[0]||'?').toUpperCase()}</div><div class="t"><b>${esc(d.name)}</b><small>${CAT[d.cat]} · ${num(d.kcal)} kcal</small></div></button>`).join(''):'<div class="empty" style="grid-column:1/-1">Chưa có món nào. Nhập tên ở trên hoặc bấm Thêm món mẫu.</div>'}
+function mk(n,cat,k,p,c,f,img){return{id:uid(),name:n,cat:cat||'food',kcal:k||0,p:p||0,c:c||0,f:f||0,img:img||'',ing:[]}}
+function addNames(){const v=$('#names').value.split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);if(!v.length)return toast('Hãy nhập ít nhất một tên món');
+v.forEach(n=>S.dishes.push(mk(n,$('#ncat').value)));toast('Đã thêm '+v.length+' món');save2()}
+function shrink(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,240/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.7))};im.onerror=()=>r('');im.src=fr.result};fr.onerror=()=>r('');fr.readAsDataURL(f)})}
+async function addImgs(fs){let n=0;for(const f of fs){const u=await shrink(f);if(u){S.dishes.push(mk(f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' '),$('#ncat')?$('#ncat').value:'food',0,0,0,0,u));n++}}toast('Đã thêm '+n+' ảnh');save2()}
+function sample(){'Phở bò|food|450|25|60|12;Cơm tấm sườn|food|650|28|85|20;Bánh mì trứng|food|380|15|45|14;Cháo gà|food|300|18|40|6;Salad ức gà|food|320|32|15|14;Cá kho và cơm|food|520|30|70|12;Yến mạch sữa chua|food|280|12|40|8;Mì xào rau|food|500|14|70|18;Trà đào|drink|120|0|30|0;Cà phê sữa|drink|110|3|17|3;Sinh tố bơ|drink|250|4|25|16;Nước cam|drink|110|2|26|0'.split(';').forEach(s=>{const a=s.split('|');if(!S.dishes.some(d=>d.name==a[0]))S.dishes.push(mk(a[0],a[1],+a[2],+a[3],+a[4],+a[5]))});toast('Đã thêm món mẫu (số liệu ước tính)');save2()}
+function spot(){if(!S.dishes.length)return toast('Thư viện đang trống, hãy thêm món trước');const f=S.dishes.filter(d=>d.cat=='food'),d=rnd(f.length?f:S.dishes);
+$('#spot').innerHTML=`<div class="box row" style="background:var(--acs)"><div class="it" style="border:0;flex:1"><div class="th" style="width:56px;height:56px;${d.img?`background-image:url(${d.img})`:''}"></div><span class="n"><b style="font-size:20px">${esc(d.name)}</b><br><small>${num(d.kcal)} kcal · đạm ${num(d.p)}g · carb ${num(d.c)}g · béo ${num(d.f)}g</small></span></div><button class="btn" onclick="spot()">Chọn lại</button><button class="btn alt" onclick="$('#spot').innerHTML=''">Đóng</button></div>`}
+
+/* ---------- dish editor ---------- */
+function openEd(id){ed=JSON.parse(JSON.stringify(D(id)));drawEd();$('#dlg').showModal()}
+function drawEd(){const e=ed;$('#dlg').innerHTML=`<h2>Sửa món</h2><div class="form">
+<label class="f">Tên<input value="${esc(e.name)}" oninput="ed.name=this.value"></label>
+<label class="f">Loại<select onchange="ed.cat=this.value">${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${e.cat==k?'selected':''}>${v}</option>`).join('')}</select></label>
+${[['kcal','Kcal'],['p','Đạm (g)'],['c','Carb (g)'],['f','Béo (g)']].map(([k,l])=>`<label class="f">${l}<input type="number" min="0" id="e_${k}" value="${num(e[k])}" oninput="ed.${k}=+this.value"></label>`).join('')}
+</div>
+<div class="row" style="margin:10px 0"><div class="th it" style="width:48px;height:48px;border:0;border-radius:8px;background:var(--sf2) center/cover;${e.img?`background-image:url(${e.img})`:''}"></div>
+<label class="btn alt btn sm" style="cursor:pointer">Đổi ảnh<input type="file" accept="image/*" hidden onchange="chImg(this.files[0])"></label>${e.img?'<button class="btn alt sm" onclick="ed.img=\'\';drawEd()">Bỏ ảnh</button>':''}</div>
+<h2>Thành phần</h2><div class="ing" style="font-size:12px;color:var(--mut)"><span>Tên</span><span>Lượng</span><span>Kcal</span><span>Đạm</span><span>Carb</span><span>Béo</span><span></span></div>
+<div id="ings">${e.ing.map((g,k)=>`<div class="ing"><input value="${esc(g.n)}" oninput="ed.ing[${k}].n=this.value" placeholder="Thịt bò"><input value="${esc(g.q)}" oninput="ed.ing[${k}].q=this.value" placeholder="100g">${['k','p','c','f'].map(x=>`<input type="number" min="0" value="${g[x]||''}" oninput="ed.ing[${k}].${x}=+this.value">`).join('')}<button class="x" onclick="ed.ing.splice(${k},1);drawEd()" aria-label="Xóa thành phần">×</button></div>`).join('')}</div>
+<div class="row" style="margin-top:6px"><button class="btn alt sm" onclick="ed.ing.push({n:'',q:'',k:0,p:0,c:0,f:0});drawEd()">Thêm thành phần</button><button class="btn alt sm" onclick="sumIng()">Cộng dồn vào món</button></div>
+<div class="row" style="margin-top:16px;justify-content:space-between"><button class="btn del" onclick="delDish()">Xóa món</button><span class="row"><button class="btn alt" onclick="$('#dlg').close()">Hủy</button><button class="btn" onclick="saveEd()">Lưu món</button></span></div>`}
+async function chImg(f){if(!f)return;ed.img=await shrink(f);drawEd()}
+function sumIng(){const t={k:0,p:0,c:0,f:0};ed.ing.forEach(g=>['k','p','c','f'].forEach(x=>t[x]+=+g[x]||0));ed.kcal=t.k;ed.p=t.p;ed.c=t.c;ed.f=t.f;drawEd();toast('Đã cộng các thành phần')}
+function saveEd(){if(!ed.name.trim())return toast('Tên món không được trống');const i=S.dishes.findIndex(x=>x.id==ed.id);S.dishes[i]=ed;$('#dlg').close();save2()}
+function delDish(){if(!confirm('Xóa món này khỏi thư viện và lịch?'))return;S.dishes=S.dishes.filter(x=>x.id!=ed.id);Object.values(S.sched).forEach(a=>a.forEach((l,i)=>a[i]=l.filter(x=>x!=ed.id)));$('#dlg').close();save2()}
+
+/* ---------- schedule actions ---------- */
+function openPick(dt,i){pk={dt,i};$('#dlg').innerHTML=`<h2>Thêm vào ${SL[i].toLowerCase()} · ${WD[parse(dt).getDay()]} ${parse(dt).getDate()}/${parse(dt).getMonth()+1}</h2><div class="row"><input id="pq" placeholder="Tìm món…" oninput="pickList()" style="flex:1"><button class="btn" onclick="$('#dlg').close();render()">Xong</button></div><div class="pick" id="pl"></div>`;pickList();$('#dlg').showModal()}
+function pickList(){const v=($('#pq').value||'').toLowerCase(),l=S.dishes.filter(d=>d.name.toLowerCase().includes(v));
+$('#pl').innerHTML=l.length?l.map(d=>`<button onclick="sched('${pk.dt}')[${pk.i}].push('${d.id}');save();toast('Đã thêm ${esc(d.name).replace(/'/g,'')}')"><span>${esc(d.name)}</span><small>${num(d.kcal)} kcal</small></button>`).join(''):'<div class="empty">Không có món phù hợp. Thêm món ở tab Thư viện.</div>'}
+function rm(dt,i,k){sched(dt)[i].splice(k,1);save2()}
+function rndMeal(dt,i,quiet){const f=S.dishes.filter(d=>d.cat=='food'),k=S.dishes.filter(d=>d.cat=='drink');if(!S.dishes.length){toast('Thư viện đang trống');return false}
+const a=sched(dt);a[i]=[rnd(f.length?f:S.dishes).id];if(k.length)a[i].push(rnd(k).id);if(!quiet)save2();return true}
+function rndDay(dt){if(![0,1,2].every(i=>rndMeal(dt,i,1)))return;save2()}
+function rndWeek(){for(let n=0;n<7;n++)for(let i=0;i<3;i++)if(!rndMeal(iso(addD(wk,n)),i,1))return;save2()}
+function clr(dt){delete S.sched[dt];save2()}
+function copyWeek(){const src=S.sched[day]||[[],[],[]];for(let n=0;n<7;n++)S.sched[iso(addD(mon(parse(day)),n))]=JSON.parse(JSON.stringify(src));toast('Đã áp dụng thực đơn cho cả tuần');save2()}
+
+/* ---------- week ---------- */
+function vWeek(){const today=iso(new Date()),ds=[...Array(7)].map((_,n)=>addD(wk,n));
+return `<div class="row" style="margin-bottom:12px"><button class="btn alt" onclick="wk=addD(wk,-7);render()">Tuần trước</button><b>${ds[0].getDate()}/${ds[0].getMonth()+1} – ${ds[6].getDate()}/${ds[6].getMonth()+1}/${ds[6].getFullYear()}</b><button class="btn alt" onclick="wk=addD(wk,7);render()">Tuần sau</button><button class="btn alt" onclick="wk=mon(new Date());render()">Tuần này</button><button class="btn" onclick="rndWeek()">Random cả tuần</button></div>
+<div class="scroll"><table><thead><tr><th style="width:64px"></th>${ds.map(d=>`<th class="${iso(d)==today?'today':''}" onclick="day='${iso(d)}';tab='day';render()" title="Mở chi tiết ngày">${WD[d.getDay()]}<small>${d.getDate()}/${d.getMonth()+1}</small></th>`).join('')}</tr></thead><tbody>
+${SL.map((s,i)=>`<tr><td class="sl">${s}</td>${ds.map(d=>{const dt=iso(d);return `<td>${items(dt,i).map((x,k)=>`<div class="chip"><span>${esc(x.name)}</span><button onclick="rm('${dt}',${i},${k})" aria-label="Xóa">×</button></div>`).join('')}<div class="mini"><button class="btn alt sm" onclick="openPick('${dt}',${i})">Thêm</button><button class="btn alt sm" onclick="rndMeal('${dt}',${i})">Random</button></div></td>`}).join('')}</tr>`).join('')}
+<tr class="tot"><td class="sl">Kcal</td>${ds.map(d=>`<td>${Math.round(tot(iso(d)).k)}</td>`).join('')}</tr></tbody></table></div>`}
+
+/* ---------- day ---------- */
+function bar(l,v,t,u){const r=t?v/t:0;return `<div class="stat"><span>${l}</span><span>${num(v)} / ${Math.round(t)} ${u}</span></div><div class="bar"><i class="${r>1.05?'over':''}" style="width:${Math.min(100,r*100)}%"></i></div>`}
+function vDay(){const d=parse(day),t=tot(day),g=tg(),bal=t.k-g.tdee,
+wkg=bal/7700*7;
+return `<div class="row" style="margin-bottom:12px"><button class="btn alt" onclick="day=iso(addD(parse(day),-1));render()">Hôm trước</button><input type="date" value="${day}" onchange="day=this.value||day;render()"><button class="btn alt" onclick="day=iso(addD(parse(day),1));render()">Hôm sau</button><b>${WD[d.getDay()]}, ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}</b></div>
+<div class="row" style="margin-bottom:12px"><button class="btn" onclick="rndDay(day)">Random cả ngày</button><button class="btn alt" onclick="copyWeek()">Áp dụng cho cả tuần</button><button class="btn del" onclick="clr(day)">Xóa ngày</button></div>
+<div class="meals">${SL.map((s,i)=>{const l=items(day,i),k=l.reduce((a,x)=>a+(+x.kcal||0),0);return `<div class="box" style="margin:0"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Bữa ${s.toLowerCase()}</h2><small>${Math.round(k)} kcal</small></div>
+${l.map((x,j)=>`<div class="it"><div class="th" style="${x.img?`background-image:url(${x.img})`:''}"></div><span class="n">${esc(x.name)}<br><small>${num(x.kcal)} kcal</small></span><button class="x" onclick="rm('${day}',${i},${j})" aria-label="Xóa">×</button></div>`).join('')||'<div class="empty">Bữa này chưa có món.</div>'}
+<div class="row" style="margin-top:8px"><button class="btn alt sm" onclick="openPick('${day}',${i})">Thêm món</button><button class="btn alt sm" onclick="rndMeal('${day}',${i})">Random</button></div></div>`}).join('')}</div>
+<div class="box" style="margin-top:16px"><h2>Dinh dưỡng trong ngày</h2>
+<div class="kv" style="margin-bottom:14px"><div><small>Đã nạp</small><span class="big">${Math.round(t.k)}</span> kcal</div><div><small>Nhu cầu duy trì (TDEE)</small><span class="big">${Math.round(g.tdee)}</span> kcal</div><div><small>${bal<0?'Thâm hụt so với TDEE':'Dư so với TDEE'}</small><span class="big" style="color:${bal<0?'var(--pr)':'var(--bad)'}">${Math.abs(Math.round(bal))}</span> kcal</div></div>
+${bar('Kcal so với mục tiêu',t.k,g.kc,'kcal')}${bar('Đạm',t.p,g.p,'g')}${bar('Carb',t.c,g.c,'g')}${bar('Chất béo',t.f,g.f,'g')}
+<p class="sub" style="font-size:13px">Nếu ngày nào cũng như vậy, cân nặng thay đổi khoảng ${wkg>0?'+':'−'}${Math.abs(wkg).toFixed(2)} kg mỗi tuần (ước tính 7700 kcal ≈ 1 kg). Mục tiêu hiện tại ${Math.round(g.kc)} kcal; chỉnh ở tab Cơ thể và mục tiêu.</p></div>`}
+
+/* ---------- body ---------- */
+function vBody(){const p=S.prof,g=tg(),bm=g.bmi,lb=bm<18.5?'Thiếu cân':bm<23?'Bình thường':bm<25?'Thừa cân nhẹ':'Thừa cân';
+const inp=(k,l,min,step)=>`<label class="f">${l}<input type="number" min="${min}" step="${step||1}" value="${p[k]}" onchange="S.prof.${k}=+this.value;save2()"></label>`;
+return `<div class="box"><h2>Thông tin cơ thể</h2><div class="form">
+<label class="f">Giới tính<select onchange="S.prof.sex=this.value;save2()"><option value="m" ${p.sex=='m'?'selected':''}>Nam</option><option value="f" ${p.sex=='f'?'selected':''}>Nữ</option></select></label>
+${inp('age','Tuổi',10)}${inp('h','Chiều cao (cm)',100)}${inp('w','Cân nặng (kg)',20,.1)}
+<label class="f">Mức vận động<select onchange="S.prof.act=+this.value;save2()">${[[1.2,'Ít vận động'],[1.375,'Nhẹ (1–3 buổi/tuần)'],[1.55,'Vừa (3–5 buổi/tuần)'],[1.725,'Nhiều (6–7 buổi/tuần)']].map(([v,l])=>`<option value="${v}" ${p.act==v?'selected':''}>${l}</option>`).join('')}</select></label>
+<label class="f">Mục tiêu<select onchange="S.prof.goal=this.value;save2()"><option value="lose" ${p.goal=='lose'?'selected':''}>Giảm cân (−500 kcal)</option><option value="keep" ${p.goal=='keep'?'selected':''}>Giữ cân</option><option value="gain" ${p.goal=='gain'?'selected':''}>Tăng cân (+300 kcal)</option></select></label></div></div>
+<div class="box"><h2>Tiêu chuẩn dinh dưỡng cho bạn</h2><div class="kv">
+<div><small>BMR (năng lượng nghỉ)</small><span class="big">${Math.round(g.bmr)}</span> kcal</div>
+<div><small>TDEE (duy trì)</small><span class="big">${Math.round(g.tdee)}</span> kcal</div>
+<div><small>Mục tiêu mỗi ngày</small><span class="big">${Math.round(g.kc)}</span> kcal</div>
+<div><small>BMI</small><span class="big">${bm.toFixed(1)}</span> ${lb}</div>
+<div><small>Đạm</small><span class="big">${Math.round(g.p)}</span> g</div>
+<div><small>Carb</small><span class="big">${Math.round(g.c)}</span> g</div>
+<div><small>Chất béo</small><span class="big">${Math.round(g.f)}</span> g</div></div>
+<p class="sub" style="font-size:13px">BMR theo công thức Mifflin–St Jeor, TDEE = BMR × mức vận động. Tỉ lệ đạm/carb/béo: giảm cân 30/40/30, giữ cân 20/50/30, tăng cân 25/50/25. Đây là ước tính tham khảo, không thay thế tư vấn của bác sĩ hoặc chuyên gia dinh dưỡng.</p></div>`}
+
+$('#dlg').addEventListener('close',()=>{if(tab!='lib')render()});
+render();
+</script>
+</body>
+</html>
